@@ -23,6 +23,16 @@ var Engine = (function(global) {
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime;
+        let step;
+
+    // const modal = document.querySelector('modal-bg');
+    // const replay = document.querySelector('modal-button');
+    // replay.addEventListener('click', function(){
+    //     modal.classList.toggle('hide');
+    //     player.reset();
+    //     player.finish = false;
+    //     win.requestAnimationFrame(main);
+    // });
 
     canvas.width = 505;
     canvas.height = 606;
@@ -55,8 +65,15 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        win.requestAnimationFrame(main);
+        if (player.finish === true){
+            win.cancelAnimationFrame(step);
+            //modal.classList.toggle('hide');
+        }
+        else {
+            step = win.requestAnimationFrame(main);
+        }
     }
+    
 
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
@@ -89,7 +106,7 @@ var Engine = (function(global) {
      * the data/properties related to the object. Do your drawing in your
      * render methods.
      */
-    function updateEntities(dt) {
+    function updateEntities(dt) { 
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
