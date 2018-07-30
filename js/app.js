@@ -1,5 +1,21 @@
 //My global variables
+let time = 0;
+let updateTimer;
+let seconds = 0;
+let minutesIcon = document.getElementById('minutes');
+let secondsIcon = document.getElementById('seconds');
+secondsIcon.innerHTML = '00';
+minutesIcon.innerHTML = '00';
+const timer = document.getElementById('timer');
 
+//pause the game
+// let paused = false;
+// window.onfocus = function(){
+//     paused = false;
+// };
+// window.onblur = function(){
+//     paused = true;
+// };
 
 //create Enemy class
 class Enemy {
@@ -92,9 +108,10 @@ const player = new Player();    //New Player object
 const enemy1 = new Enemy(-101, 0, 200);
 const enemy2 = new Enemy(-101, 83, 400);
 const enemy3 = new Enemy(-101, 166, 300);     //New Enemy object
+const enemy4 = new Enemy(-101, 166, 150);
 let allEnemies =[];             //inst allEnemies array
-allEnemies.push(enemy1, enemy2, enemy3);          //for each enemy create and push new Enemy object into above array
-//console.log(allEnemies);
+allEnemies.push(enemy1, enemy2, enemy3, enemy4);          //for each enemy create and push new Enemy object into above array
+
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method
@@ -107,3 +124,39 @@ document.addEventListener('keyup', function(e) {
     };
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+function calcTimer(seconds){
+    const minutes = Math.floor(seconds / 60);
+    const secInMin = seconds % 60;
+    return [minutes, secInMin];
+}
+
+//function to start the timer 
+function myTimer(){
+    updateTimer = setInterval(function(){  //Update timer in the screen
+            seconds++;
+            const tm = calcTimer(seconds);
+            secondsIcon.innerHTML = (tm[1] < 10) ? `0${tm[1]}` : `${tm[1]}`;
+            minutesIcon.innerHTML = (tm[0] < 10) ?  `0${tm[0]}` : `${tm[0]}`;
+    },1000);
+}
+function resetTimer(){
+    seconds = 0;
+    minutesIcon.innerHTML = "00";
+    secondsIcon.innerHTML = "00";
+    updateTimer = undefined;
+}
+function stopTimer() {    //function to clearInterval to stop the timer.
+      clearInterval(updateTimer); 
+}
+myTimer();
+
+class Modal {
+    constructor (){ 
+        let modal = document.getElementById('myModal'); 
+        let winText=document.querySelector("#winner");
+        const tm = calcTimer(seconds); 
+        modal.className=('modalshow'); //call the win modal
+        winText.innerHTML = "Congratulations! \nYou won the game! \nYou took "+ tm[0] + " minutes and " + tm[1] + " seconds to win the game.";   
+    }
+}

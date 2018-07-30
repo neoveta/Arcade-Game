@@ -24,7 +24,7 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
         let step;
-
+        let paused = false;
     // const modal = document.querySelector('modal-bg');
     // const replay = document.querySelector('modal-button');
     // replay.addEventListener('click', function(){
@@ -68,6 +68,9 @@ var Engine = (function(global) {
         if (player.finish === true){
             win.cancelAnimationFrame(step);
             //modal.classList.toggle('hide');
+            stopTimer();
+            let modal = new Modal();
+            resetTimer();
         }
         else {
             step = win.requestAnimationFrame(main);
@@ -95,8 +98,11 @@ var Engine = (function(global) {
      * on the entities themselves within your app.js file).
      */
     function update(dt) {
+        if(!paused){
         updateEntities(dt);
-        // checkCollisions();
+        //checkCollisions();
+        //checkWin();
+        }
     }
 
     /* This is called by the update function and loops through all of the

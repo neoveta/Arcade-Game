@@ -1,3 +1,56 @@
 body {
     text-align: center;
+    font-family: 'Gloria Hallelujah', cursive;
 }
+h1 {
+    font-size: 40px;
+    letter-spacing: 5px;
+    text-align: center;
+    border-bottom: 3px solid black;
+}
+
+#timer{
+    text-align: right;
+}
+
+/*
+ * Styles for the footer
+ */
+ footer {
+    background-color: #9eebe3;
+    width: 100%;
+    bottom: 0;
+    position: fixed;
+    text-align: center;    
+}
+
+/*
+ * Styles for the modal
+ */
+ .modal {
+    display: none;
+ }
+
+ .modalshow {
+    position: absolute !important;
+    z-index: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(184, 243, 245);
+    border-style: ridge ; 
+ }
+
+ .win-text{ 
+    font-size: 25px;
+ }
+
+ .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; 
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; 
+  } 
