@@ -8,15 +8,6 @@ secondsIcon.innerHTML = '00';
 minutesIcon.innerHTML = '00';
 const timer = document.getElementById('timer');
 
-//pause the game
-// let paused = false;
-// window.onfocus = function(){
-//     paused = false;
-// };
-// window.onblur = function(){
-//     paused = true;
-// };
-
 //create Enemy class
 class Enemy {
    constructor(x,y,speed){
@@ -69,8 +60,7 @@ class Player {
                 this.finish = true;
             }
     }                  
-    //keyboard input (event listener), update player's x abd y according to input
-    handleInput(input) {
+    handleInput(input) {        //keyboard input (event listener), update player's x abd y according to input
         switch(input){
             case 'left':
             if (this.x > 0){
@@ -96,13 +86,11 @@ class Player {
                 break;
         }
     }
-
     reset(){        //reset Player's position, set x and y to starting coordinates  
         this.x = this.startX;
         this.y = this.startY;    
     } 
 }
-
 //Instantiate all objects
 const player = new Player();    //New Player object
 const enemy1 = new Enemy(-101, 0, 200);
@@ -111,7 +99,7 @@ const enemy3 = new Enemy(-101, 166, 300);     //New Enemy object
 const enemy4 = new Enemy(-101, 166, 150);
 let allEnemies =[];             //inst allEnemies array
 allEnemies.push(enemy1, enemy2, enemy3, enemy4);          //for each enemy create and push new Enemy object into above array
-
+const gem = new Gem();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method
@@ -130,9 +118,7 @@ function calcTimer(seconds){
     const secInMin = seconds % 60;
     return [minutes, secInMin];
 }
-
-//function to start the timer 
-function myTimer(){
+function myTimer(){     //function to start the timer 
     updateTimer = setInterval(function(){  //Update timer in the screen
             seconds++;
             const tm = calcTimer(seconds);

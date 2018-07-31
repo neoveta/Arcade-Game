@@ -67,7 +67,6 @@ var Engine = (function(global) {
          */
         if (player.finish === true){
             win.cancelAnimationFrame(step);
-            //modal.classList.toggle('hide');
             stopTimer();
             let modal = new Modal();
             resetTimer();
