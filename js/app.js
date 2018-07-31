@@ -99,7 +99,6 @@ const enemy3 = new Enemy(-101, 166, 300);     //New Enemy object
 const enemy4 = new Enemy(-101, 166, 150);
 let allEnemies =[];             //inst allEnemies array
 allEnemies.push(enemy1, enemy2, enemy3, enemy4);          //for each enemy create and push new Enemy object into above array
-const gem = new Gem();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method
