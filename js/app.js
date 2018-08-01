@@ -1,16 +1,8 @@
-//My global variables
-let time = 0;
-let updateTimer;
-let seconds = 0;
-let minutesIcon = document.getElementById('minutes');
-let secondsIcon = document.getElementById('seconds');
-secondsIcon.innerHTML = '00';
-minutesIcon.innerHTML = '00';
-const timer = document.getElementById('timer');
-
 //create Enemy class
 class Enemy {
    constructor(x,y,speed){
+    this.width = 101;
+    this.height = 87;
     this.x = 0;
     this.y = y +55;        // center Enemy's position in the block
     this.speed =speed;
@@ -38,48 +30,78 @@ class Enemy {
 class Player { 
     constructor(){
         this.sprite = 'images/char-boy.png';
-        this.step = 101;    //canvan's blocks width is 101 px and height is 83 px
-        this.jump = 83;
-        this.startX = this.step * 2;    //moves Player to 2 blocks to the right
-        this.startY = (this.jump * 4) + 55;    //moves Player to 5 blocks down and add padding 20px to center Player
+        this.rows = 6;
+        this.columns = 5;
+        this.rowHeight = 87;    //canvan's blocks width is 101 px and height is 83 px
+        this.rowWidth = 101;
+        this.startRow = 4;
+        this.startColumn = 2;
+        this.startX = this.startColumn * this.rowWidth;//this.stepY * 2;    //moves Player to 2 blocks to the right
+        this.startY = this.startRow * this.rowHeight + Math.floor(this.rowHeight/2);// + Math.floor(this.rowHeight/2);//(this.stepX * 4) + 55;    //moves Player to 5 blocks down and add padding 20px to center Player
         this.x = this.startX;
         this.y = this.startY;
-        this.finish = false;
+        this.finishCount = 0;
     }  
     render(){       //Draws Player sprite on current x and y coordinats
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
+    
+    isCollision(enemy){   //check for contact with Enemy 
+        const collOffset = 25;
+        const myLeftX = this.x - collOffset;
+        const myRightX = this.x + collOffset;
+        const myBottomY = this.y - collOffset;
+        const myTopY = this.y + collOffset;
+        
+        const enemyLeftX = enemy.x - collOffset;
+        const enemyRightX = enemy.x + collOffset;
+        const enemyBottomY = enemy.y - collOffset;
+        const enemyTopY = enemy.y + collOffset;
+        let xColl = false, yColl = false; 
+        if (((myLeftX >= enemyLeftX) && (myLeftX <= enemyRightX)) ||
+        ((myRightX >= enemyLeftX) && (myRightX <= enemyRightX))){
+            xColl = true;
+        }
+        if (((myTopY >= enemyBottomY) && (myTopY <= enemyTopY)) ||
+        (myBottomY >= enemyBottomY) && (myBottomY <= enemyTopY)){
+            yColl = true; 
+        }
+        return (xColl && yColl);
     } 
+
     update(){
-             for(let enemy of allEnemies){      //check for contact with Enemy
-                if(this.y === enemy.y && (enemy.x + enemy.step/2 > this.x && enemy.x < this.x + this.step/2)){  //did position x and y the same as Enemy's                   
+             for(let enemy of allEnemies){      
+                if(this.isCollision(enemy)){   
                     this.reset();
                 }
              }
               //check win 
-            if(this.y === 55){
-                this.finish = true;
+            if (this.y < this.rowHeight){
+                //to let draw images before show win alert
+                this.finishCount++;
             }
-    }                  
+    }  
+
     handleInput(input) {        //keyboard input (event listener), update player's x abd y according to input
         switch(input){
             case 'left':
-            if (this.x > 0){
-                this.x -= this.step;
-                }
+            if (this.x >= this.rowWidth){
+                this.x -= this.rowWidth;
+               }
                 break;
             case 'up':
-            if(this.y > 0){
-                this.y -= this.jump;
+            if(this.y >= this.rowHeight){
+                this.y -= this.rowHeight;
                 }
                 break;
             case 'right':
-            if(this.x < this.step * 4){
-                this.x += this.step;
+            if(this.x < this.rowWidth * (this.columns-1) ){
+                this.x += this.rowWidth;
                 }
                 break;
             case 'down':
-                if(this.y < this.jump * 4){
-                this.y += this.jump;
+                if(this.y < this.startY ){
+                this.y += this.rowHeight;
                 }
                 break;
             default:
@@ -91,6 +113,53 @@ class Player {
         this.y = this.startY;    
     } 
 }
+
+class Timer{
+    
+    constructor(){
+        this.seconds = 0;
+        this.minutesIcon = document.getElementById('minutes');
+        this.secondsIcon = document.getElementById('seconds');
+        this.secondsIcon.innerHTML = '00';
+        this.minutesIcon.innerHTML = '00';
+
+        this.interval = setInterval(() => {  //Update timer in the screen
+            this.seconds++;
+            const tm = this.calcTimer(seconds);
+            this.secondsIcon.innerHTML = (tm[1] < 10) ? `0${tm[1]}` : `${tm[1]}`;
+            this.minutesIcon.innerHTML = (tm[0] < 10) ?  `0${tm[0]}` : `${tm[0]}`;
+    },1000);
+    }
+
+    calcTimer(seconds){
+        const minutes = Math.floor(this.seconds / 60);
+        const secInMin = this.seconds % 60;
+        return [minutes, secInMin];
+    }
+
+    resetTimer(){
+        this.seconds = 0;
+        this.minutesIcon.innerHTML = "00";
+        this.secondsIcon.innerHTML = "00";
+        this.stopTimer();
+    }
+
+    stopTimer() {    //function to clearInterval to stop the timer.
+        clearInterval(this.interval);
+        this.interval = undefined;
+  }      
+}
+
+class Modal {
+    constructor (secs){ 
+        let modal = document.getElementById('myModal'); 
+        let winText=document.querySelector("#winner");
+        const tm = secs; 
+        modal.className=('modalshow'); //call the win modal
+        winText.innerHTML = "Congratulations! \nYou won the game! \nYou took "+ tm[0] + " minutes and " + tm[1] + " seconds to win the game.";   
+    }
+}
+
 //Instantiate all objects
 const player = new Player();    //New Player object
 const enemy1 = new Enemy(-101, 0, 200);
@@ -99,9 +168,9 @@ const enemy3 = new Enemy(-101, 166, 300);     //New Enemy object
 const enemy4 = new Enemy(-101, 166, 150);
 let allEnemies =[];             //inst allEnemies array
 allEnemies.push(enemy1, enemy2, enemy3, enemy4);          //for each enemy create and push new Enemy object into above array
+const myTimer = new Timer(); //timer
 
 // This listens for key presses and sends the keys to your
-// Player.handleInput() method
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
@@ -111,37 +180,3 @@ document.addEventListener('keyup', function(e) {
     };
     player.handleInput(allowedKeys[e.keyCode]);
 });
-
-function calcTimer(seconds){
-    const minutes = Math.floor(seconds / 60);
-    const secInMin = seconds % 60;
-    return [minutes, secInMin];
-}
-function myTimer(){     //function to start the timer 
-    updateTimer = setInterval(function(){  //Update timer in the screen
-            seconds++;
-            const tm = calcTimer(seconds);
-            secondsIcon.innerHTML = (tm[1] < 10) ? `0${tm[1]}` : `${tm[1]}`;
-            minutesIcon.innerHTML = (tm[0] < 10) ?  `0${tm[0]}` : `${tm[0]}`;
-    },1000);
-}
-function resetTimer(){
-    seconds = 0;
-    minutesIcon.innerHTML = "00";
-    secondsIcon.innerHTML = "00";
-    updateTimer = undefined;
-}
-function stopTimer() {    //function to clearInterval to stop the timer.
-      clearInterval(updateTimer); 
-}
-myTimer();
-
-class Modal {
-    constructor (){ 
-        let modal = document.getElementById('myModal'); 
-        let winText=document.querySelector("#winner");
-        const tm = calcTimer(seconds); 
-        modal.className=('modalshow'); //call the win modal
-        winText.innerHTML = "Congratulations! \nYou won the game! \nYou took "+ tm[0] + " minutes and " + tm[1] + " seconds to win the game.";   
-    }
-}

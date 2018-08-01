@@ -25,14 +25,6 @@ var Engine = (function(global) {
         lastTime;
         let step;
         let paused = false;
-    // const modal = document.querySelector('modal-bg');
-    // const replay = document.querySelector('modal-button');
-    // replay.addEventListener('click', function(){
-    //     modal.classList.toggle('hide');
-    //     player.reset();
-    //     player.finish = false;
-    //     win.requestAnimationFrame(main);
-    // });
 
     canvas.width = 505;
     canvas.height = 606;
@@ -54,6 +46,7 @@ var Engine = (function(global) {
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
+        
         update(dt);
         render();
 
@@ -65,17 +58,17 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        if (player.finish === true){
+        
+        if (player.finishCount === 15){
             win.cancelAnimationFrame(step);
-            stopTimer();
-            let modal = new Modal();
-            resetTimer();
+            const secs = myTimer.calcTimer();
+            myTimer.resetTimer();
+            const modal = new Modal(secs);
         }
         else {
             step = win.requestAnimationFrame(main);
         }
     }
-    
 
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
@@ -99,8 +92,6 @@ var Engine = (function(global) {
     function update(dt) {
         if(!paused){
         updateEntities(dt);
-        //checkCollisions();
-        //checkWin();
         }
     }
 
@@ -159,7 +150,6 @@ var Engine = (function(global) {
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
-
         renderEntities();
     }
 
